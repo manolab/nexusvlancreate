@@ -149,7 +149,7 @@ def main():
         remove_l2vni_from_evpn(l2vni_arg)
         remove_l2vni_from_nve(l2vni_arg)
         delete_vlan_and_l2vni(vlan_arg)
-
+    clis.append("copy r s")
     try:
         vteps = [line.rstrip('\n') for line in open(vteps_file)]
     except FileNotFoundError:
