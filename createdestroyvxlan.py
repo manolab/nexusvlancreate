@@ -166,7 +166,7 @@ def main():
                 logger.debug(clis)
                 if not debug: post_clis(vtep, switch_user, switch_password, clis)
                 logger.info("verifying switch configuration")
-                if not debut: check_vlan(vtep, switch_user, switch_password, vlan_arg)
+                if not debug: check_vlan(vtep, switch_user, switch_password, vlan_arg)
             else:
                 logger.warning("password not found for vtep "+vtep)
 
