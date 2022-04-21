@@ -1,4 +1,4 @@
-#! /usr/bin/python3
+#! /usr/bin/python3 -B
 
 import requests, json, sys, coloredlogs, logging
 from nxapi import *

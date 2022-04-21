@@ -1,28 +1,46 @@
 #!/usr/bin/python3 -B
 
-import requests
+import requests, coloredlogs, logging
 import json
 import sys
 from nxapi import *
 
+logger = logging.getLogger(__name__)
+if '-d' in sys.argv:
+    logger.setLevel(logging.DEBUG)
+    coloredlogs.install(level='DEBUG', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
+    logger.debug("debug mode!") 
+    sys.argv.remove('-d')
+else:
+    logger.setLevel(logging.INFO)
+    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
+    
+debug = False
+if '-dry' in sys.argv:
+    debug = True
+    sys.argv.remove('-dry')
+
+logger.info("started!")
+
 vteps_file = "tuttinexus"
+logger.debug("switch list in file: "+vteps_file)
 try:
     command_arg = sys.argv[1]
     if command_arg != 'create' and command_arg != 'destroy':
         raise IndexError
 except IndexError:
-    print("create or destroy command needed!")
+    logger.error("create or destroy command needed!")
     sys.exit(1)
 try:
     vlan_arg = sys.argv[2]
 except IndexError:
-    print("vlan id nedeed!")
+    logger.error("vlan id nedeed!")
     sys.exit(1)
 try:
     name_arg = sys.argv[3]
 except IndexError:
     if command_arg == 'create':
-        print("name needed!")
+        logger.error("name needed!")
         sys.exit(1)
 
 clis = []
@@ -67,9 +85,11 @@ def findpass(device):
                 if chunks[1] == 'password':
                     if device == chunks[2]:
                         password = chunks[3]
+                        logger.debug("found password!")
                 if chunks[1] == 'user':
                     if device == chunks[2]:
                         user = chunks[3]
+                        logger.debug("found username!")
             if user and password:
                 break
 
@@ -86,19 +106,29 @@ def main():
 
     clis.append("copy run sta")
 
-    vteps=[line.rstrip('\n') for line in open(vteps_file)]
+    try:
+        vteps=[line.rstrip('\n') for line in open(vteps_file)]
+    except FileNotFoundError:
+        logger.error('\''+vteps_file+'\' file not found!')
+        sys.exit(1)
 
     for vtep in vteps:
         switch_password=''
         if '#' not in vtep:
-            print("****** Switch: %s ******" % (vtep))
+            logger.info("Switch %s" % (vtep))
             (switch_user, switch_password) = findpass(vtep)
             if switch_password:
-                print("****** Sending Commands To Switch ******")
-                post_clis(vtep, switch_user, switch_password, clis)
-                if command_arg == 'create':
-                    print("****** Verify Switch Configuration ******")
+                logger.debug("password found for switch "+vtep)
+                logger.info("sending commands to switch "+vtep)
+                logger.debug(clis)
+                if not debug: post_clis(vtep, switch_user, switch_password, clis)
+                if command_arg == 'create' and not debug:
+                    logger.info("verifying switch configuration")
                     check_vlan(vtep, switch_user, switch_password, vlan_arg)
+            else:
+                logger.warning("password not found for switch "+vtep)
 
 if __name__ == "__main__":
     main()
+logger.info(sys.argv[0]+" ended!")
+sys.exit(0)
