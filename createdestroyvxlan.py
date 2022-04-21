@@ -7,13 +7,16 @@ logger = logging.getLogger(__name__)
 if '-d' in sys.argv:
     logger.setLevel(logging.DEBUG)
     coloredlogs.install(level='DEBUG', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
-    logger.debug("debug mode!")
-    debug = True
+    logger.debug("debug mode!") 
     sys.argv.remove('-d')
 else:
     logger.setLevel(logging.INFO)
     coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
-    debug = False
+    
+debug = False
+if '-dry' in sys.argv:
+    debug = True
+    sys.argv.remove('-dry')
 
 logger.info("started!")
 
