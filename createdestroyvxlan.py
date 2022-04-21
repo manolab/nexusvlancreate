@@ -4,7 +4,18 @@ import requests, json, sys, coloredlogs, logging
 from nxapi import *
 
 logger = logging.getLogger(__name__)
-logger.info(sys.argv[0]+" started!")
+if '-d' in sys.argv:
+    logger.setLevel(logging.DEBUG)
+    coloredlogs.install(level='DEBUG', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
+    logger.debug("debug mode!")
+    debug = True
+    sys.argv.remove('-d')
+else:
+    logger.setLevel(logging.INFO)
+    coloredlogs.install(level='INFO', logger=logger, fmt='%(asctime)s %(levelname)s %(message)s')
+    debug = False
+
+logger.info("started!")
 
 vteps_file = "vteps"
 logger.debug("switch list in file: "+vteps_file)
@@ -30,16 +41,9 @@ except IndexError:
     if command_arg == 'create':
         logger.error("vlan name needed!")
         sys.exit(1)
-if '-d' in sys.argv:
-    logger.debug("debug mode!")
-    coloredlogs.install(level='DEBUG')
-    debug = True
-else:
-    coloredlogs.install(level='INFO')
-    debug = False
 
 l2vni_arg = vlan_arg+10000
-logger.debug("vni: "+l2vni_arg)
+logger.debug("vni: "+str(l2vni_arg))
 clis = []
 
 #def enable_features():
@@ -146,7 +150,11 @@ def main():
         remove_l2vni_from_nve(l2vni_arg)
         delete_vlan_and_l2vni(vlan_arg)
 
-    vteps = [line.rstrip('\n') for line in open(vteps_file)]
+    try:
+        vteps = [line.rstrip('\n') for line in open(vteps_file)]
+    except FileNotFoundError:
+        logger.error('\''+vteps_file+'\' file not found!')
+        sys.exit(1)
     for vtep in vteps:
         switch_password=''
         if '#' not in vtep:
