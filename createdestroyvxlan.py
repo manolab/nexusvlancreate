@@ -30,13 +30,13 @@ except IndexError:
     if command_arg == 'create':
         logger.error("vlan name needed!")
         sys.exit(1)
-if sys.argv[len(sys.argv)] == '-d':
+if '-d' in sys.argv:
     logger.debug("debug mode!")
     coloredlogs.install(level='DEBUG')
-    debug = 1
+    debug = True
 else:
     coloredlogs.install(level='INFO')
-    debug = 0
+    debug = False
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+l2vni_arg)
