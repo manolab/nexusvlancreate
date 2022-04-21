@@ -95,9 +95,10 @@ def vlantomcg(vlan):
             mc = str(vlan)[0:1]+'.'+str(vlan)[1:]
     return '239.0.'+mc
 
-def create_vlan_and_l2vni(vlan, l2vni):
+def create_vlan_and_l2vni(vlan, l2vni, name):
     clis.append("vlan %s" % vlan)
     clis.append("  vn-segment %s" % l2vni)
+    clis.append("  name %s" % name)
 
 def add_l2vni_to_nve(l2vni, mcast_group):
     clis.append("int nve1")
@@ -143,7 +144,7 @@ def check_vlan(switch, user, passw, vlan):
 def main():
     if command_arg == 'create':
         #enable_features()
-        create_vlan_and_l2vni(vlan_arg, l2vni_arg)
+        create_vlan_and_l2vni(vlan_arg, l2vni_arg, name_arg)
         add_l2vni_to_nve(l2vni_arg, vlantomcg(vlan_arg))
         add_l2vni_to_evpn(l2vni_arg)
         #set_vlan_on_access_port(vlan_arg, access_port_arg)
