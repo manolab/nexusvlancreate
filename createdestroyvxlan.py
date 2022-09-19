@@ -44,6 +44,10 @@ except IndexError:
     if command_arg == 'create':
         logger.error("vlan name needed!")
         sys.exit(1)
+try:
+    which_vteps = sys.argv[4]
+except IndexError:
+    which_vteps = 'all'
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+str(l2vni_arg))
@@ -105,7 +109,7 @@ def add_l2vni_to_nve(l2vni, mcast_group):
     #clis.append("  host-reachability protocol bgp")
     clis.append("  member vni %s" % l2vni)
     clis.append("  mcast-group %s" % mcast_group)
-    clis.append("  suppress-arp")
+    #clis.append("  suppress-arp")
 
 def add_l2vni_to_evpn(l2vni):
     clis.append("evpn")
@@ -159,7 +163,11 @@ def main():
     except FileNotFoundError:
         logger.error('\''+vteps_file+'\' file not found!')
         sys.exit(1)
-    for vtep in vteps:
+    if which_vteps == 'all':
+        quali = vteps.copy()
+    else:
+        quali = list(which_vteps.split(','))
+    for vtep in quali:
         switch_password=''
         if '#' not in vtep:
             logger.info("VTEP %s" % (vtep))
@@ -170,11 +178,11 @@ def main():
                 logger.debug(clis)
                 if not debug: post_clis(vtep, switch_user, switch_password, clis)
                 logger.info("verifying switch configuration")
-                if not debug: check_vlan(vtep, switch_user, switch_password, vlan_arg)
+                if not debug and command_arg =='create': check_vlan(vtep, switch_user, switch_password, vlan_arg)
             else:
                 logger.warning("password not found for vtep "+vtep)
+    logger.info(sys.argv[0]+" ended!")
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
-logger.info(sys.argv[0]+" ended!")
-sys.exit(0)
