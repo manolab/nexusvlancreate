@@ -44,6 +44,10 @@ except IndexError:
     if command_arg == 'create':
         logger.error("vlan name needed!")
         sys.exit(1)
+try:
+    which_vteps = sys.argv[4]
+except IndexError:
+    which_vteps = 'all'
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+str(l2vni_arg))
@@ -159,7 +163,11 @@ def main():
     except FileNotFoundError:
         logger.error('\''+vteps_file+'\' file not found!')
         sys.exit(1)
-    for vtep in vteps:
+    if which_vteps == 'all':
+        quali = vteps.copy()
+    else:
+        quali = list(which_vteps.split(','))
+    for vtep in quali:
         switch_password=''
         if '#' not in vtep:
             logger.info("VTEP %s" % (vtep))
