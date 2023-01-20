@@ -37,7 +37,7 @@ except IndexError:
     sys.exit(1)
 except ValueError:
     logger.error("vlan id should be a number!")
-    exit(1)
+    sys.exit(1)
 try:
     name_arg = sys.argv[3]
 except IndexError:
@@ -48,8 +48,12 @@ try:
     which_vteps = sys.argv[4]
 except IndexError:
     logger.error("switch selection empty!")
+<<<<<<< HEAD
     exit(1)
 
+=======
+    sys.exit(1)
+>>>>>>> 1b84b9414d9c5666c6af7824ad2ef94a988bf808
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+str(l2vni_arg))
