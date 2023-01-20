@@ -127,8 +127,8 @@ def main():
                     check_vlan(vtep, switch_user, switch_password, vlan_arg)
             else:
                 logger.warning("password not found for switch "+vtep)
+    logger.info(sys.argv[0]+" ended!")
+    sys.exit(0)
 
 if __name__ == "__main__":
     main()
-logger.info(sys.argv[0]+" ended!")
-sys.exit(0)

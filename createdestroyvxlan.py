@@ -47,7 +47,9 @@ except IndexError:
 try:
     which_vteps = sys.argv[4]
 except IndexError:
-    which_vteps = 'all'
+    logger.error("switch selection empty!")
+    exit(1)
+
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+str(l2vni_arg))
@@ -186,3 +188,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+logger.info(sys.argv[0]+" ended!")
+sys.exit(0)
