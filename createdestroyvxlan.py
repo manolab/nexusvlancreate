@@ -100,9 +100,15 @@ def vlantomcg(vlan):
         mc = '0.'+str(vlan)
     else:
         if len(str(vlan)) == 4:
-            mc = str(vlan)[0:2]+'.'+str(vlan)[2:]
+            if str(vlan)[-2:] == '00':
+                mc = str(vlan)[0:2]+'.0'
+            else:    
+                mc = str(vlan)[0:2]+'.'+str(vlan)[2:].lstrip('0')    
         else:
-            mc = str(vlan)[0:1]+'.'+str(vlan)[1:]
+            if str(vlan)[-2:] == '00':
+                mc = str(vlan)[0:1]+'.0'
+            else:
+                mc = str(vlan)[0:1]+'.'+str(vlan)[1:].lstrip('0')
     return '239.0.'+mc
 
 def create_vlan_and_l2vni(vlan, l2vni, name):
