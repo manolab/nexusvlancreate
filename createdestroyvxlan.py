@@ -115,7 +115,8 @@ def add_l2vni_to_nve(l2vni, mcast_group):
     clis.append("int nve1")
     #clis.append("  host-reachability protocol bgp")
     clis.append("  member vni %s" % l2vni)
-    clis.append("  mcast-group %s" % mcast_group)
+    #clis.append("  mcast-group %s" % mcast_group)
+    clis.append("  ingress-replication protocol bgp")
     #clis.append("  suppress-arp")
 
 def add_l2vni_to_evpn(l2vni):
