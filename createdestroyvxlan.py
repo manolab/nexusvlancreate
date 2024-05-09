@@ -41,14 +41,19 @@ except ValueError:
 try:
     name_arg = sys.argv[3]
 except IndexError:
+    # if it's destroy argv[3] contains the 'which_vteps' parameter!
     if command_arg == 'create':
         logger.error("vlan name needed!")
         sys.exit(1)
 try:
     which_vteps = sys.argv[4]
 except IndexError:
-    logger.error("switch selection empty!")
-    sys.exit(1)
+    if command_arg == 'destroy':
+        # destroy: the name parameter does not exists
+        which_vteps = name_arg
+    else:
+        logger.error("switch selection empty!")
+        sys.exit(1)
 
 l2vni_arg = vlan_arg+10000
 logger.debug("vni: "+str(l2vni_arg))
